@@ -14,9 +14,13 @@ def generate_forecast(history_dict):
 
     future = model.make_future_dataframe(periods=30)
     forecast = model.predict(future)
+    
+    if forecast.shape[0] < 30:
+        return 0, {}  # Jei kažkodėl grąžina per mažai eilučių – išeinam
+    
+    forecast_future = forecast.tail(30).copy()
+    forecast_future["yhat"] = forecast_future["yhat"].apply(lambda x: max(x, 0))
 
-    forecast_future = forecast_future.copy()  # <-- Šita eilutė
-    forecast_future["yhat"] = forecast_future["yhat"].apply(lambda x: max(x, 0))  # <--- FIX čia
 
     forecast_sum = round(forecast_future["yhat"].sum())
 
