@@ -16,6 +16,8 @@ def generate_forecast(history_dict):
     forecast = model.predict(future)
 
     forecast_future = forecast.tail(30)
+    forecast_future["yhat"] = forecast_future["yhat"].apply(lambda x: max(x, 0))  # <--- FIX čia
+
     forecast_sum = round(forecast_future["yhat"].sum())
 
     forecast_per_day = {
